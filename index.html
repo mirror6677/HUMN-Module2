@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    <script src="libraries/p5.js" type="text/javascript"></script>
+
+    <script src="libraries/p5.dom.js" type="text/javascript"></script>
+    <script src="libraries/p5.sound.js" type="text/javascript"></script>
+
+    <script src="Bag.js" type="text/javascript"></script>
+
+    <style> body {padding: 0; margin: 0;} canvas {vertical-align: top;} </style>
+  </head>
+  <body>
+    <script>
+      var state = 0;
+      var bag = new Bag(5);
+      var button1, button2, button3, button4;
+
+      function setup() {
+        myCanvas = createCanvas(windowWidth, windowHeight);
+        wW = windowWidth;
+        wH = windowHeight;
+      }
+
+      function draw() {
+        if (wW != windowWidth || wH != windowHeight) {
+          myCanvas.resize(windowWidth, windowHeight);
+        }
+        background(200);
+
+        if (state == 0) {
+          introduction();
+        } else if (state == 1) {
+          dungeon();
+        } else if (state == 2) {
+          twistyTunnel();
+        } else if (state == 3) {
+          secretSwordStash();
+        } else if (state == 4) {
+          storageRoon();
+        } else if (state == 5) {
+          roomOfNecessity();
+        } else if (state == 6) {
+          rapidMoat();
+        } else if (state == 7) {
+          mysteriousVault();
+        } else if (state == 8) {
+          hallCloset();
+        } else if (state == 9) {
+          masterStudy();
+        } else if (state == 10) {
+          dragonDen();
+        } else if (state == 11) {
+          openDoor();
+        } else if (state == 'F1') {
+          failure1();
+        }
+      }
+      /*
+      function hint() {
+        fill(0);
+        textStyle(NORMAL);
+        textSize(15);
+        textAlign(CENTER);
+        text("hint", width*0.9, height*0.1);
+      }
+      */
+      function mouseClicked() {
+        if (state == 0) {
+          state = 5
+        }
+        else if (state == 1) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          }
+        }
+        else if (state == 2) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          } else if (button2 instanceof Button && button2.isOver) {
+            state = button2.stateNum;
+          }
+        }
+        else if (state == 3) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          }
+        }
+        else if (state == 4) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          } else if (button2.isOver) {
+            state = button2.stateNum;
+          } else if (button3.isOver) {
+            state = button3.stateNum;
+          }
+        }
+        else if (state == 5) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          } else if (button2.isOver) {
+            state = button2.stateNum;
+          } else if (button3.isOver) {
+            state = button3.stateNum;
+          } else if (button4.isOver) {
+            state = button4.stateNum;
+          }
+        }
+        else if (state == 6) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          } else if (button2 instanceof Button && button2.isOver) {
+            state = button2.stateNum;
+          } else if (button3 instanceof Button && button3.isOver) {
+            state = button2.stateNum;
+          }
+        }
+        else if (state == 7) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          } else if (buttonY instanceof Button && buttonY.isOver) {
+            state = button2.stateNum;
+          } else if (buttonN instanceof Button && buttonN.isOver) {
+            state = button2.stateNum;
+          }
+        }
+        else if (state == 8) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          }
+        }
+        else if (state == 9) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          }
+        }
+        else if (state == 10) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          } else if (button2.isOver) {
+            state = button2.stateNum;
+          } else if (button3.isOver) {
+            state = button3.stateNum;
+          }
+        }
+        else if (state == 11) {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          } else if (button2.isOver) {
+            state = button2.stateNum;
+          }
+        }
+        else if (state == 12) {
+
+        }
+        else if (state == 'F1') {
+          if (button1.isOver) {
+            state = button1.stateNum;
+          }
+        }
+      }
+
+      function stateChange(nextState) {
+        if (!mouseIsPressed) {
+          state = nextState;
+        }
+      }
+
+      //state = 0
+      function introduction() {
+        textAlign(CENTER, CENTER);
+        textSize(30);
+        textStyle(BOLD);
+        text("Escape from the Dead Castle", width/2, height/6.5);
+
+        textSize(15);
+        textStyle(ITALIC);
+        text("Jacob Ashkettle, Duoyang Huang, Jingya Wu", width/2, height/5);
+
+        textSize(14);
+        textStyle(NORMAL);
+        textAlign(LEFT, TOP);
+        text("You are a handsome knight that has just awaken in an unfamiliar castle you aren’t sure how you got here but you know that it’s probably best if you leave. Around you, you have four directions. You can go into a twisty tunnel, where you can hear a horrendous noise coming from, outside to the moat, into the room next to you or to look through the hall closet. In front of you, you see a table containing what looks like 5 servings of food; each serving gives you enough energy to get you through 7 rooms in the castle, but beware if you run out of food you will perish, so good luck! Hint: this is an adventure game and you are a knight so you will probably need to address the horrible noise at some point.", width*0.1, height*0.3, width*0.8, height*0.4);
+
+        textSize(16);
+        textStyle(NORMAL);
+        textAlign(CENTER);
+        text("Click anywhere to begin!", width/2, height*0.7);
+      }
+
+      //state = 1
+      function dungeon() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("The Dungeon", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You’ve decided to go into the dungeon. The stench of rot and decay is everywhere; you stumble over what looks like a pile of bones that could potentially be human. After further examination you realize there is a human skull in the pile as well as broken wine bottles, empty bowls and what looks like a steak bone. After walking all the way through the dungeon you realize it is a dead end. Hint: A meaty bone may be a good distraction for a little beast.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        text("What do you want to grab?", width*0.1, height*0.5);
+        text("Which way do you want to go?", width*0.1, height*0.7);
+
+        checkBox1 = new CheckBox(0.1*width, 0.55*height, 'Wine bottles');
+        checkBox2 = new CheckBox(0.25*width, 0.55*height, 'Empty bowls');
+        checkBox3 = new CheckBox(0.4*width, 0.55*height, 'Steak bone');
+
+        button1 = new Button(0.1*width, 0.75*height, 'SOUTH', 4);
+      }
+
+      //state = 2
+      function twistyTunnel() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Twisty Tunnel", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You’ve decided to go into the twisty tunnel, to the north of the tunnel you see what appears to be a light, and maybe it’s the way out of this retched place. However as you get closer you realize that there is a locked gate at the end and you will need a key to get past, the roaring that you could hear from the opening has gotten exponentially louder. You had better prepare yourself before opening this gate. Hint: hopefully you can find a weapon of some sort to defend yourself in case the beast on the other side of the gate isn’t friendly.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        text("Which way do you want to go?", width*0.1, height*0.5);
+
+        button1 = new Button(0.1*width, 0.6*height, 'SOUTH', 5);
+
+        if (bag.items.indexOf('key') >= -1) {
+          button2 = new Button(0.25*width, 0.6*height, 'NORTH', 11);
+        }
+      }
+
+      //state = 3
+      function secretSwordStash() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Secret Sword Stash", width*0.1, height*0.15);
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You’ve reached the armory, you go to walk inside the hut and realize it is dark as night and you can’t see anything. (Need to use flashlight and batteries. If you don’t, you stumble around a dark room with sharp objects and die.) After using the flashlight to light the room you can see that the armory hasn’t been used in a long time, many of the weapons are broken. After rummaging through most of the hut you manage to find a shield, sword, bow with a broken string, some arrows, and a short club. Hint: carrying all these items will fill your inventory, it’s probably best if you do not take more than two.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        text("What do you want to grab?", width*0.1, height*0.5);
+        text("Which way do you want to go?", width*0.1, height*0.7);
+
+        checkBox1 = new CheckBox(0.1*width, 0.55*height, 'Shield');
+        checkBox2 = new CheckBox(0.25*width, 0.55*height, 'Sword');
+        checkBox3 = new CheckBox(0.4*width, 0.55*height, 'Bow');
+        checkBox4 = new CheckBox(0.55*width, 0.55*height, 'Arrows');
+        checkBox5 = new CheckBox(0.7*width, 0.55*height, 'Club');
+
+        button1 = new Button(0.1*width, 0.75*height, 'SOUTH', 6);
+      }
+
+      //state= 4
+      function storageRoon() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Storage Room", width*0.1, height*0.15);
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You’ve just walked into a well-lit room with what looks like a dresser in the far corner. After opening the drawers you found that the contents of the dresser are matches, string, scissors, a battery and a knife. On the north and south sides of the room are two doors leading to different rooms. The one on the north side has bars on the window of the door to suggest it could be a dungeon. The south side is just a normal door. Hint: the battery may be a good source of electricity for a different item.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        text("What do you want to grab?", width*0.1, height*0.5);
+        text("Which way do you want to go?", width*0.1, height*0.7);
+
+        //checkBox1 = new CheckBox(0.1*width, 0.55*height, 'Matches');
+        checkBox2 = new CheckBox(0.25*width, 0.55*height, 'String');
+        checkBox3 = new CheckBox(0.4*width, 0.55*height, 'Scissors');
+        checkBox4 = new CheckBox(0.55*width, 0.55*height, 'Battery');
+        checkBox5 = new CheckBox(0.1*width, 0.55*height, 'Knife');
+
+        button1 = new Button(0.1*width, 0.75*height, 'EAST', 5);
+        button2 = new Button(0.25*width, 0.75*height, 'NORTH', 1);
+        button3 = new Button(0.4*width, 0.75*height, 'SOUTH', 7);
+      }
+
+      //state = 5
+      function roomOfNecessity() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Room of Necessity", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("Around you, you have four directions. You can go into a twisty tunnel where you can hear a horrendous noise coming from (north), outside to the moat (east); into the room next to you (west); or to look through the hall closet (south). In front of you, you see a table containing what looks like 5 servings of food; each serving gives you enough energy to get you through 7 rooms in the castle, but beware if you run out of food you will perish, so good luck!", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        //food = '5'
+        //text("Grab some food? (" + food + 'servings left)', width*0.1, height*0.6);
+        text("Which way do you want to go?", width*0.1, height*0.7);
+
+        button1 = new Button(0.1*width, 0.75*height, 'WEST', 4);
+        button2 = new Button(0.25*width, 0.75*height, 'EAST', 6);
+        button3 = new Button(0.4*width, 0.75*height, 'NORTH', 2);
+        button4 = new Button(0.55*width, 0.75*height, 'SOUTH', 8);
+      }
+
+      //state = 6
+      function rapidMoat() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Rapid Moat", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You’ve come outside and the only thing here is a moat with a huge wall all the way around, to the  north you can see what looks like a little hut that could’ve at one time doubled as an armory. To the south you hear what sounds like a dog barking angrily and there is a larger house that could’ve been the owner of the castle’s study. There is a large sign on the door that says “beware of dog” and a slot that looks like you could slide food through it. The only problem is you need something to allow you to navigate this stagnate moat before reaching either room. You can clearly see there is something swimming about inside the moat, and judging by the looks of things it doesn’t look friendly.  Hint: if only you could find some form of boat.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        if (bag.items.indexOf('canoe') >= -1) {
+          text("You may use your canoe to go into the moat. Which way to you want to go?", width*0.1, height*0.5);
+          text("Or you may go back.", width*0.1, height*0.7);
+
+          button2 = new Button(0.1*width, 0.55*height, 'NORTH', 3);
+          button3 = new Button(0.25*width, 0.55*height, 'SOUTH', 9);
+        }
+        else {
+          text("You don't have a canoe with you.", width*0.1, height*0.5);
+          text("Which way do you want to go?", width*0.1, height*0.7);
+        }
+
+        button1 = new Button(0.1*width, 0.75*height, 'WEST', 5);
+      }
+
+      //state = 7
+      function mysteriousVault() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Myesterious Vault", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You’ve walked into what looks like the treasury room, you see lined along the side wall three large chests. After examining the chests you see there is a gold one (contains nothing), a silver one(contains gold that’s useless in this game), and a wooden one (contains the key), however it looks like you need some form of code to open them. On the front of each box there is a combination lock, but they all appear to be identical. Hint: you may need to find a code before opening these chests.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        if (bag.items.indexOf('rightcode') >= 0 || bag.items.indexOf('wrongcode') >= 0) {
+          text("What do you want to try open the wooden chest with the code you obtained?", width*0.1, height*0.5);
+
+          buttonY = new Button(0.1*width, 0.6*height, 'YES', 7);
+          buttonN = new Button(0.25*width, 0.6*height, 'NO', 7);
+        }
+        else {
+          text("You haven't any code memorized yet.", width*0.1, height*0.5);
+        }
+        text("Which way do you want to go?", width*0.1, height*0.7);
+
+        button1 = new Button(0.1*width, 0.75*height, 'NORTH', 4);
+      }
+
+      //state = 8
+      function hallCloset() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Room of Necessity", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You open the door to what looks like a bunch of old camping gear, after surveying the usefulness of everything you realize that there are only five things worth mentioning; a flashlight in need of new batteries, a rain coat, sleeping bag, tent and a canoe with one oar. Unfortunately you can only hold 5 items at a time so choose your inventory wisely. Hint: you may need something to help you cross the moat.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        text("What do you want to grab?", width*0.1, height*0.5);
+        text("Which way do you want to go?", width*0.1, height*0.7);
+
+        checkBox1 = new CheckBox(0.1*width, 0.55*height, 'Flashlight');
+        checkBox2 = new CheckBox(0.25*width, 0.55*height, 'Rain coat');
+        checkBox3 = new CheckBox(0.4*width, 0.55*height, 'Sleeping bag');
+        checkBox4 = new CheckBox(0.55*width, 0.55*height, 'Tent');
+        checkBox5 = new CheckBox(0.7*width, 0.55*height, 'Caneo');
+
+        button1 = new Button(0.1*width, 0.75*height, 'NORTH', 5);
+      }
+
+      //state = 9
+      function masterStudy() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Master's Study", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("If you have not heeded the beware of dog sign outside the doot you have just died because there was a dog inside that has just mauled you to ribbons you’re dead. If you were smart enough to heed the sign then you’re in luck because the dog is laying in the corner enjoying his bone. You’ve just come into a room with a desk in the center piled high with papers and books.  After looking through the stuff on the table you see that there is an empty folder marked important, three different books titled Gone With the Wind, The Count of Monte Christo, and The Dream of Red Mansions. Scattered on the desk are a bunch of papers, all with the same three numbers on them 25-47-32. What could it possibly mean? Hint: the numbers look like the perfect amount to enter into a combination lock.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        text("Which way do you want to go?", width*0.1, height*0.6);
+
+        button1 = new Button(0.1*width, 0.75*height, 'NORTH', 6);
+      }
+
+      //state = 10
+      function dragonDen() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Dragon's Den", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You’ve finally made it through the locked gate, you walk farther down the tunnel and hear the noises getting louder as you round the corner you see a huge dragon snoring on top of a huge pile of gold (if you chose to pick up the gold from early the dragon awakes immediately and burns you alive for being greedy) you have three options, go back and better prepare yourself for this beast, try to attack the dragon while it sleeps, or alert the dragon of your presence and prepare for the worst.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        text("What is your decision?", width*0.1, height*0.6);
+
+        button1 = new Button(0.1*width, 0.65*height, 'GO BACK', 2);
+        button2 = new Button(0.25*width, 0.65*height, 'ATTACH NOW', 'F1');
+        button3 = new Button(0.4*width, 0.65*height, 'ALERT DRAGON', 12);
+      }
+
+      //state = 11
+      function openDoor() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Twisty Tunnel", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You’ve decided to go into the twisty tunnel, to the north of the tunnel you see what appears to be a light, and maybe it’s the way out of this retched place. However as you get closer you realize that there is a locked gate at the end and you will need a key to get past, the roaring that you could hear from the opening has gotten exponentially louder. You had better prepare yourself before opening this gate. Hint: hopefully you can find a weapon of some sort to defend yourself in case the beast on the other side of the gate isn’t friendly.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        text("Are you sure you want to unlock the door now?", width*0.1, height*0.5);
+
+        button1 = new Button(0.1*width, 0.6*height, 'YES', 10);
+        button2 = new Button(0.25*width, 0.6*height, 'NO', 2);
+      }
+
+      //state = 12
+      function awakenBeast() {
+        text("Still need narrative...", width*0.1, height*0.2, width*0.8, height*0.3);
+      }
+
+      //state = F1
+      function failure1() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Game Over", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You’re supposed to be a courageous knight not a coward! To slay something while it’s sleeping Is against the knight’s and since you tried to do so you got exactly what you deserved. While creeping up on the dragon you knocked over some gold coins which awoke the beast. Since you were so close the beast simple tripped you with its tail and then proceeded to turn you into a little snack. That’s what you get for being a coward!", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        button1 = new Button(0.1*width, 0.6*height, 'PLAY AGAIN', 0);
+      }
+
+      function Button(xpos, ypos, textLabel, stateNum) {
+        this.xpos = xpos;
+        this.ypos = ypos;
+        this.textLabel = textLabel;
+        this.stateNum = stateNum;
+
+        noStroke();
+        fill(100, 100);
+        rect(this.xpos, this.ypos, width/12, width/20);
+
+        textAlign(CENTER, CENTER);
+        textSize(14);
+        textStyle(NORMAL);
+        fill(0)
+        text(textLabel, this.xpos, this.ypos, width/12, width/20);
+
+        if (mouseX > this.xpos && mouseX < this.xpos+width/12 && mouseY > this.ypos && mouseY < this.ypos+width/20) {
+          //state = stateNum;
+          this.isOver = true;
+        }
+        else {
+          this.isOver = false;
+        }
+      }
+
+      function CheckBox(xpos, ypos, textLabel) {
+        this.xpos = xpos;
+        this.ypos = ypos;
+        this.textLabel = textLabel;
+
+        noStroke();
+        if (mouseIsPressed && mouseX > this.xpos && mouseX < this.xpos+width/12 && mouseY > this.ypos && mouseY < this.ypos+width/20) {
+          fill(80, 150);
+        }
+        else {
+          fill(100, 100);
+        }
+        rect(this.xpos, this.ypos, width/12, width/20);
+
+        textAlign(CENTER, CENTER);
+        textSize(14);
+        textStyle(NORMAL);
+        fill(0)
+        text(textLabel, this.xpos, this.ypos, width/12, width/20);
+      }
+
+      function BagFullException() {
+        this.message = "Your bag is full! Drop something before picking up.";
+      }
+
+      function AlreadyInException() {
+        this.message = "This item is already in your bag!";
+      }
+
+      function NotInException() {
+        this.message = "You can't throw away item that is not in your bag!";
+      }
+
+      function Bag(limit) {
+        this.size = 0;
+        this.items = [];
+        for (i = 0; i < limit; i ++) {
+          this.items.push(null);
+        }
+        this.limit = limit;
+
+        this.pick = function(item) {
+          if (this.size == this.limit) {
+            throw new BagFullException();
+          }
+
+          else if (this.items.indexOf(item) >= 0) {
+            throw new AlreadyInException();
+          }
+
+          else {
+            this.items[this.size] = item;
+            this.size ++;
+          }
+        }
+
+        this.drop = function(item) {
+          if (this.items.indexOf(item) == -1) {
+            throw new NotInException();
+          }
+
+          else {
+            index = this.items.indexOf(item);
+
+            for (i = index; i < size; i ++) {
+              items[i] = items[i+1]
+            }
+
+            this.size --;
+          }
+        }
+
+        this.display = function() {
+          return this.items
+        }
+      }
+
+    </script>
+  </body>
+</html>
