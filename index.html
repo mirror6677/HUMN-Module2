@@ -15,8 +15,13 @@
   <body>
     <script>
       var state = 0;
-      var bag = new Bag(5);
+      var bag = new Bag(7);
       var button1, button2, button3, button4;
+      var bagCheckBox;
+      var checkBoxes;
+      var weapon = '';
+      var servingLeft = 5;
+      var energyLeft = 7;
 
       function setup() {
         myCanvas = createCanvas(windowWidth, windowHeight);
@@ -46,6 +51,8 @@
           rapidMoat();
         } else if (state == 7) {
           mysteriousVault();
+        } else if (state == 71) {
+          codeRight();
         } else if (state == 8) {
           hallCloset();
         } else if (state == 9) {
@@ -54,95 +61,261 @@
           dragonDen();
         } else if (state == 11) {
           openDoor();
+        } else if (state == 12) {
+          awakenBeast();
         } else if (state == 'F1') {
           failure1();
+        } else if (state == 'F2') {
+          failure2();
+        } else if (state == 'F3') {
+          failure3();
+        } else if (state == 'F4') {
+          failure4();
+        } else if (state == 'F5') {
+          failure5();
+        } else if (state == 'W') {
+          win();
+        }
+
+        bagCheckBox = new CheckBox(0.85*width, 0.1*height, 'Bag Info', 1);
+        food();
+      }
+
+      function listBag() {
+        if (bagCheckBox.isOver) {
+          s = 'Items in your bag:\n';
+          for (i = 0; i < bag.size; i ++) {
+            s += '\n\t' + bag.items[i];
+          }
+          alert(s);
         }
       }
-      /*
-      function hint() {
+
+      function food() {
         fill(0);
         textStyle(NORMAL);
         textSize(15);
-        textAlign(CENTER);
-        text("hint", width*0.9, height*0.1);
+        textAlign(RIGHT, TOP);
+        text("Food remaining:", width*0.83, height*0.9);
+        text("Energy remaining:", width*0.83, height*0.85);
+
+        for (i = 0; i < 5; i ++) {
+          if (i < servingLeft) {
+            fill(0);
+          }
+          else {
+            noFill();
+          }
+          stroke(255);
+          ellipse(width*(0.85+0.01*i), height*0.915, 0.005*width, 0.005*width);
+        }
+        for (i = 0; i < 7; i ++) {
+          if (i < energyLeft) {
+            fill(0);
+          }
+          else {
+            noFill();
+          }
+          ellipse(width*(0.85+0.01*i), height*0.865, 0.005*width, 0.005*width);
+        }
+        fill(0);
+        noStroke();
+        textAlign(LEFT);
       }
-      */
+
+      function pickAndDrop() {
+        for (i = 0; i < checkBoxes.length; i ++) {
+          if (checkBoxes[i].isOver) {
+            try {
+              isError = false;
+              bag.pick(checkBoxes[i].textLabel);
+            }
+            catch (err) {
+              isError = true;
+              if (err instanceof AlreadyInException){
+                confirm("This item is already in your bag! Pick something else.")
+              }
+              else if (err instanceof BagFullException) {
+                dropping = confirm("Your bag is full! Do you want to drop an item?");
+                while (dropping) {
+                  dropItem = prompt("Which item do you want to drop? (Click on Bag Info to see what's in your bag.)");
+                  if (dropItem != null) {
+                    try {
+                      bag.drop(dropItem);
+                      dropping = false;
+                    }
+                    catch (err) {
+                      dropping = confirm("This item is not in your bag! Enter a different item.")
+                    }
+                  }
+                  else {
+                    dropping = false;
+                  }
+                }
+              }
+            }
+            if (!isError) {
+              checkBoxes[i].check = true;
+            }
+          }
+        }
+      }
+
+      function pickFood() {
+        if (checkBoxes[0].isOver) {
+          doPick = confirm("Do you want to pick up a new serving of food? Your remaining food will be automatically dropped!");
+        }
+        if (doPick) {
+          servingLeft --;
+          energyLeft = 7;
+          doPick = false;
+        }
+      }
+
       function mouseClicked() {
+        listBag();
+
         if (state == 0) {
           state = 5
         }
         else if (state == 1) {
-          if (button1.isOver) {
+          if (energyLeft < 1) {
+            state = 'F2';
+          } else if (button1.isOver) {
             state = button1.stateNum;
+            energyLeft --;
           }
+          pickAndDrop();
         }
         else if (state == 2) {
-          if (button1.isOver) {
+          if (energyLeft < 1) {
+            state = 'F2';
+          } else if (button1.isOver) {
             state = button1.stateNum;
+            energyLeft --;
           } else if (button2 instanceof Button && button2.isOver) {
             state = button2.stateNum;
+            energyLeft --;
           }
         }
         else if (state == 3) {
-          if (button1.isOver) {
+          if (energyLeft < 1) {
+            state = 'F2';
+          } else if (button1.isOver) {
             state = button1.stateNum;
+            energyLeft --;
           }
+          pickAndDrop();
         }
         else if (state == 4) {
-          if (button1.isOver) {
+          if (energyLeft < 1) {
+            state = 'F2';
+          } else if (button1.isOver) {
             state = button1.stateNum;
+            energyLeft --;
           } else if (button2.isOver) {
             state = button2.stateNum;
+            energyLeft --;
           } else if (button3.isOver) {
             state = button3.stateNum;
+            energyLeft --;
           }
+          pickAndDrop();
         }
         else if (state == 5) {
-          if (button1.isOver) {
+          if (energyLeft == 0) {
+            if (button1.isOver || button2.isOver || button3.isOver || button4.isOver) {
+              if (servingLeft == 0) {
+                state = 'F2';
+              }
+              else {
+                alert("You are starving! Pick up some food before proceeding.")
+              }
+            }
+          }
+          else if (button1.isOver) {
             state = button1.stateNum;
+            energyLeft --;
           } else if (button2.isOver) {
             state = button2.stateNum;
+            energyLeft --;
           } else if (button3.isOver) {
             state = button3.stateNum;
+            energyLeft --;
           } else if (button4.isOver) {
             state = button4.stateNum;
+            energyLeft --;
+          }
+          if (checkBoxes.length > 0) {
+            pickFood();
           }
         }
         else if (state == 6) {
-          if (button1.isOver) {
+          if (energyLeft < 1) {
+            state = 'F2';
+          } else if (button1.isOver) {
             state = button1.stateNum;
+            energyLeft --;
           } else if (button2 instanceof Button && button2.isOver) {
             state = button2.stateNum;
+            energyLeft --;
           } else if (button3 instanceof Button && button3.isOver) {
-            state = button2.stateNum;
+            state = button3.stateNum;
+            energyLeft --;
           }
         }
         else if (state == 7) {
+          if (energyLeft < 1) {
+            state = 'F2';
+          } else if (button1.isOver) {
+            state = button1.stateNum;
+            energyLeft --;
+            if (bag.items.indexOf('Code') >= 0) {
+              bag.drop('Code');
+            }
+          } else if (buttonY instanceof Button && buttonY.isOver) {
+            state = buttonY.stateNum;
+          }
+        }
+        else if (state == 71) {
           if (button1.isOver) {
             state = button1.stateNum;
-          } else if (buttonY instanceof Button && buttonY.isOver) {
-            state = button2.stateNum;
-          } else if (buttonN instanceof Button && buttonN.isOver) {
-            state = button2.stateNum;
+            energyLeft --;
+            bag.drop('Code');
           }
+          pickAndDrop();
         }
         else if (state == 8) {
-          if (button1.isOver) {
+          if (energyLeft < 1) {
+            state = 'F2';
+          } else if (button1.isOver) {
             state = button1.stateNum;
+            energyLeft --;
           }
+          pickAndDrop();
         }
         else if (state == 9) {
-          if (button1.isOver) {
+          if (energyLeft < 1) {
+            state = 'F2';
+          } else if (button1 instanceof Button && button1.isOver) {
             state = button1.stateNum;
+            energyLeft --;
+            bag.drop('Steak bone');
           }
+          pickAndDrop();
         }
         else if (state == 10) {
-          if (button1.isOver) {
+          if (energyLeft < 1) {
+            state = 'F2';
+          } else if (button1.isOver) {
             state = button1.stateNum;
+            energyLeft --;
           } else if (button2.isOver) {
             state = button2.stateNum;
+            energyLeft --;
           } else if (button3.isOver) {
             state = button3.stateNum;
+            energyLeft --;
           }
         }
         else if (state == 11) {
@@ -153,9 +326,9 @@
           }
         }
         else if (state == 12) {
-
+          awakenBeast();
         }
-        else if (state == 'F1') {
+        else if (state == 'F1' || state == 'F2' || state == 'F3' || state == 'F4' || state == 'F5') {
           if (button1.isOver) {
             state = button1.stateNum;
           }
@@ -170,6 +343,9 @@
 
       //state = 0
       function introduction() {
+        bag = new Bag(7);
+        servingLeft = 5;
+        energyLeft = 7;
         textAlign(CENTER, CENTER);
         textSize(30);
         textStyle(BOLD);
@@ -188,6 +364,9 @@
         textStyle(NORMAL);
         textAlign(CENTER);
         text("Click anywhere to begin!", width/2, height*0.7);
+
+        fill(150);
+        text("Reference: p5js.org", width*0.15, height*0.9);
       }
 
       //state = 1
@@ -209,6 +388,8 @@
         checkBox2 = new CheckBox(0.25*width, 0.55*height, 'Empty bowls');
         checkBox3 = new CheckBox(0.4*width, 0.55*height, 'Steak bone');
 
+        checkBoxes = [checkBox1, checkBox2, checkBox3];
+
         button1 = new Button(0.1*width, 0.75*height, 'SOUTH', 4);
       }
 
@@ -228,33 +409,40 @@
 
         button1 = new Button(0.1*width, 0.6*height, 'SOUTH', 5);
 
-        if (bag.items.indexOf('key') >= -1) {
+        if (bag.items.indexOf('Key') >= 0) {
           button2 = new Button(0.25*width, 0.6*height, 'NORTH', 11);
         }
       }
 
       //state = 3
       function secretSwordStash() {
-        textSize(18);
-        textStyle(BOLD);
-        textAlign(LEFT, TOP);
-        text("Secret Sword Stash", width*0.1, height*0.15);
+        if (bag.items.indexOf('Flashlight') < 0 || bag.items.indexOf('Battery') < 0) {
+          state = 'F3';
+        }
+        else {
+          textSize(18);
+          textStyle(BOLD);
+          textAlign(LEFT, TOP);
+          text("Secret Sword Stash", width*0.1, height*0.15);
 
-        textSize(14);
-        textStyle(NORMAL);
-        text("You’ve reached the armory, you go to walk inside the hut and realize it is dark as night and you can’t see anything. (Need to use flashlight and batteries. If you don’t, you stumble around a dark room with sharp objects and die.) After using the flashlight to light the room you can see that the armory hasn’t been used in a long time, many of the weapons are broken. After rummaging through most of the hut you manage to find a shield, sword, bow with a broken string, some arrows, and a short club. Hint: carrying all these items will fill your inventory, it’s probably best if you do not take more than two.", width*0.1, height*0.2, width*0.8, height*0.3);
+          textSize(14);
+          textStyle(NORMAL);
+          text("You’ve reached the armory, you go to walk inside the hut and realize it is dark as night and you can’t see anything. After using the flashlight to light the room you can see that the armory hasn’t been used in a long time, many of the weapons are broken. After rummaging through most of the hut you manage to find a shield, sword, bow with a broken string, some arrows, and a short club. Hint: carrying all these items will fill your inventory, it’s probably best if you do not take more than two.", width*0.1, height*0.2, width*0.8, height*0.3);
 
-        textStyle(BOLD);
-        text("What do you want to grab?", width*0.1, height*0.5);
-        text("Which way do you want to go?", width*0.1, height*0.7);
+          textStyle(BOLD);
+          text("What do you want to grab?", width*0.1, height*0.5);
+          text("Which way do you want to go?", width*0.1, height*0.7);
 
-        checkBox1 = new CheckBox(0.1*width, 0.55*height, 'Shield');
-        checkBox2 = new CheckBox(0.25*width, 0.55*height, 'Sword');
-        checkBox3 = new CheckBox(0.4*width, 0.55*height, 'Bow');
-        checkBox4 = new CheckBox(0.55*width, 0.55*height, 'Arrows');
-        checkBox5 = new CheckBox(0.7*width, 0.55*height, 'Club');
+          checkBox1 = new CheckBox(0.1*width, 0.55*height, 'Shield');
+          checkBox2 = new CheckBox(0.25*width, 0.55*height, 'Sword');
+          checkBox3 = new CheckBox(0.4*width, 0.55*height, 'Bow');
+          checkBox4 = new CheckBox(0.55*width, 0.55*height, 'Arrows');
+          checkBox5 = new CheckBox(0.7*width, 0.55*height, 'Club');
 
-        button1 = new Button(0.1*width, 0.75*height, 'SOUTH', 6);
+          checkBoxes = [checkBox1, checkBox2, checkBox3, checkBox4,checkBox5];
+
+          button1 = new Button(0.1*width, 0.75*height, 'SOUTH', 6);
+        }
       }
 
       //state= 4
@@ -278,6 +466,8 @@
         checkBox4 = new CheckBox(0.55*width, 0.55*height, 'Battery');
         checkBox5 = new CheckBox(0.1*width, 0.55*height, 'Knife');
 
+        checkBoxes = [checkBox2, checkBox3, checkBox4, checkBox5];
+
         button1 = new Button(0.1*width, 0.75*height, 'EAST', 5);
         button2 = new Button(0.25*width, 0.75*height, 'NORTH', 1);
         button3 = new Button(0.4*width, 0.75*height, 'SOUTH', 7);
@@ -288,15 +478,21 @@
         textSize(18);
         textStyle(BOLD);
         textAlign(LEFT, TOP);
-        text("Room of Necessity", width*0.1, height*0.15)
+        text("Room of Necessity", width*0.1, height*0.15);
 
         textSize(14);
         textStyle(NORMAL);
-        text("Around you, you have four directions. You can go into a twisty tunnel where you can hear a horrendous noise coming from (north), outside to the moat (east); into the room next to you (west); or to look through the hall closet (south). In front of you, you see a table containing what looks like 5 servings of food; each serving gives you enough energy to get you through 7 rooms in the castle, but beware if you run out of food you will perish, so good luck!", width*0.1, height*0.2, width*0.8, height*0.3);
+        text("Around you, you have four directions. You can go into a twisty tunnel where you can hear a horrendous noise coming from (north), outside to the moat (east); into the room next to you (west); or to look through the hall closet (south). In front of you, you see a table containing what looks like " + servingLeft + " servings of food; each serving gives you enough energy to get you through 7 rooms in the castle, but beware if you run out of food you will perish, so good luck!", width*0.1, height*0.2, width*0.8, height*0.3);
 
         textStyle(BOLD);
-        //food = '5'
-        //text("Grab some food? (" + food + 'servings left)', width*0.1, height*0.6);
+        if (servingLeft > 0) {
+          checkBox = new Button(0.1*width, 0.5*height, 'Grab Food');
+          checkBoxes = [checkBox];
+        }
+        else {
+          checkBoxes = [];
+        }
+        textAlign(LEFT, TOP);
         text("Which way do you want to go?", width*0.1, height*0.7);
 
         button1 = new Button(0.1*width, 0.75*height, 'WEST', 4);
@@ -314,10 +510,10 @@
 
         textSize(14);
         textStyle(NORMAL);
-        text("You’ve come outside and the only thing here is a moat with a huge wall all the way around, to the  north you can see what looks like a little hut that could’ve at one time doubled as an armory. To the south you hear what sounds like a dog barking angrily and there is a larger house that could’ve been the owner of the castle’s study. There is a large sign on the door that says “beware of dog” and a slot that looks like you could slide food through it. The only problem is you need something to allow you to navigate this stagnate moat before reaching either room. You can clearly see there is something swimming about inside the moat, and judging by the looks of things it doesn’t look friendly.  Hint: if only you could find some form of boat.", width*0.1, height*0.2, width*0.8, height*0.3);
+        text("You’ve come outside and the only thing here is a moat with a huge wall all the way around, to the north you can see what looks like a little hut that could’ve at one time doubled as an armory. To the south you hear what sounds like a dog barking angrily and there is a larger house that could’ve been the owner of the castle’s study. There is a large sign on the door that says “beware of dog” and a slot that looks like you could slide food through it, so make sure that you have some sort of food for that beast before you enter. The only problem is you need something to allow you to navigate this stagnate moat before reaching either room. You can clearly see there is something swimming about inside the moat, and judging by the looks of things it doesn’t look friendly. Hint: if only you could find some form of boat.", width*0.1, height*0.2, width*0.8, height*0.3);
 
         textStyle(BOLD);
-        if (bag.items.indexOf('canoe') >= -1) {
+        if (bag.items.indexOf('Canoe') >= 0) {
           text("You may use your canoe to go into the moat. Which way to you want to go?", width*0.1, height*0.5);
           text("Or you may go back.", width*0.1, height*0.7);
 
@@ -325,8 +521,8 @@
           button3 = new Button(0.25*width, 0.55*height, 'SOUTH', 9);
         }
         else {
-          text("You don't have a canoe with you.", width*0.1, height*0.5);
-          text("Which way do you want to go?", width*0.1, height*0.7);
+          text("You don't have any sort of boat with you.", width*0.1, height*0.5);
+          text("You may want to go back and find one.", width*0.1, height*0.7);
         }
 
         button1 = new Button(0.1*width, 0.75*height, 'WEST', 5);
@@ -344,16 +540,38 @@
         text("You’ve walked into what looks like the treasury room, you see lined along the side wall three large chests. After examining the chests you see there is a gold one (contains nothing), a silver one(contains gold that’s useless in this game), and a wooden one (contains the key), however it looks like you need some form of code to open them. On the front of each box there is a combination lock, but they all appear to be identical. Hint: you may need to find a code before opening these chests.", width*0.1, height*0.2, width*0.8, height*0.3);
 
         textStyle(BOLD);
-        if (bag.items.indexOf('rightcode') >= 0 || bag.items.indexOf('wrongcode') >= 0) {
-          text("What do you want to try open the wooden chest with the code you obtained?", width*0.1, height*0.5);
+        if (bag.items.indexOf('Code') >= 0) {
+          text("Do you want to try open the wooden chest with the code you obtained?", width*0.1, height*0.5);
 
-          buttonY = new Button(0.1*width, 0.6*height, 'YES', 7);
-          buttonN = new Button(0.25*width, 0.6*height, 'NO', 7);
+          buttonY = new Button(0.1*width, 0.55*height, 'YES', 71);
         }
         else {
           text("You haven't any code memorized yet.", width*0.1, height*0.5);
         }
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
         text("Which way do you want to go?", width*0.1, height*0.7);
+
+        button1 = new Button(0.1*width, 0.75*height, 'NORTH', 4);
+      }
+
+      //state = 71
+      function codeRight() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Myesterious Vault", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You’ve walked into what looks like the treasury room, you see lined along the side wall three large chests. After examining the chests you see there is a gold one (contains nothing), a silver one(contains gold that’s useless in this game), and a wooden one (contains the key), however it looks like you need some form of code to open them. On the front of each box there is a combination lock, but they all appear to be identical. Hint: you may need to find a code before opening these chests.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textStyle(BOLD);
+        text("You got the right code! There is a key in the wooden chest. Click on the button below to pick it up.", width*0.1, height*0.5);
+        text("Which way do you want to go?", width*0.1, height*0.7);
+
+        checkBox1 = new CheckBox(0.1*width, 0.55*height, 'Key');
+        checkBoxes = [checkBox1];
 
         button1 = new Button(0.1*width, 0.75*height, 'NORTH', 4);
       }
@@ -377,26 +595,38 @@
         checkBox2 = new CheckBox(0.25*width, 0.55*height, 'Rain coat');
         checkBox3 = new CheckBox(0.4*width, 0.55*height, 'Sleeping bag');
         checkBox4 = new CheckBox(0.55*width, 0.55*height, 'Tent');
-        checkBox5 = new CheckBox(0.7*width, 0.55*height, 'Caneo');
+        checkBox5 = new CheckBox(0.7*width, 0.55*height, 'Canoe');
+
+        checkBoxes = [checkBox1, checkBox2, checkBox3, checkBox4,checkBox5];
 
         button1 = new Button(0.1*width, 0.75*height, 'NORTH', 5);
       }
 
       //state = 9
       function masterStudy() {
-        textSize(18);
-        textStyle(BOLD);
-        textAlign(LEFT, TOP);
-        text("Master's Study", width*0.1, height*0.15)
+        if (bag.items.indexOf('Steak bone') < 0) {
+          state = 'F4';
+        }
+        else {
+          textSize(18);
+          textStyle(BOLD);
+          textAlign(LEFT, TOP);
+          text("Master's Study", width*0.1, height*0.15)
 
-        textSize(14);
-        textStyle(NORMAL);
-        text("If you have not heeded the beware of dog sign outside the doot you have just died because there was a dog inside that has just mauled you to ribbons you’re dead. If you were smart enough to heed the sign then you’re in luck because the dog is laying in the corner enjoying his bone. You’ve just come into a room with a desk in the center piled high with papers and books.  After looking through the stuff on the table you see that there is an empty folder marked important, three different books titled Gone With the Wind, The Count of Monte Christo, and The Dream of Red Mansions. Scattered on the desk are a bunch of papers, all with the same three numbers on them 25-47-32. What could it possibly mean? Hint: the numbers look like the perfect amount to enter into a combination lock.", width*0.1, height*0.2, width*0.8, height*0.3);
+          textSize(14);
+          textStyle(NORMAL);
+          text("You were smart enough to heed the sign then you’re in luck because the dog is laying in the corner enjoying the bone that you just throwed out from your bag. You’ve just come into a room with a desk in the center piled high with papers and books. After looking through the stuff on the table you see that there is an empty folder marked important, three different books titled Gone With the Wind, The Count of Monte Christo, and The Dream of Red Mansions. Scattered on the desk are a bunch of papers, all with the same three numbers on them 25-47-32. What could it possibly mean? Hint: the numbers look like the perfect amount to enter into a combination lock.", width*0.1, height*0.2, width*0.8, height*0.3);
 
-        textStyle(BOLD);
-        text("Which way do you want to go?", width*0.1, height*0.6);
+          textStyle(BOLD);
+          text("Which way do you want to go?", width*0.1, height*0.7);
+          text("Do you want to memorize the code? Click on the button below to keep the code in your bag.", width*0.1, height*0.5);
 
-        button1 = new Button(0.1*width, 0.75*height, 'NORTH', 6);
+          checkBox1 = new CheckBox(0.1*width, 0.55*height, 'Code');
+
+          checkBoxes = [checkBox1];
+
+          button1 = new Button(0.1*width, 0.75*height, 'NORTH', 6);
+        }
       }
 
       //state = 10
@@ -414,7 +644,7 @@
         text("What is your decision?", width*0.1, height*0.6);
 
         button1 = new Button(0.1*width, 0.65*height, 'GO BACK', 2);
-        button2 = new Button(0.25*width, 0.65*height, 'ATTACH NOW', 'F1');
+        button2 = new Button(0.25*width, 0.65*height, 'ATTACK NOW', 'F1');
         button3 = new Button(0.4*width, 0.65*height, 'ALERT DRAGON', 12);
       }
 
@@ -438,10 +668,37 @@
 
       //state = 12
       function awakenBeast() {
-        text("Still need narrative...", width*0.1, height*0.2, width*0.8, height*0.3);
+        if (bag.items.indexOf('Shield') >= 0 && bag.items.indexOf('Sword') >= 0) {
+          weapon = 'sword and shield';
+          state = 'W';
+        }
+        else if (bag.items.indexOf('Bow') >= 0 && bag.items.indexOf('Arrows') >= 0) {
+          weapon = 'bow and arrows';
+          state = 'W';
+        }
+        else {
+          state = 'F5';
+        }
+      }
+
+      //state = 'W'
+      function win() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Beast is Awake", width*0.1, height*0.15);
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You awaken the beast and as expected it’s not happy it lunges foward and you luckily dodge. After what seems like an hour you are finally able to work your way close enough to strike the beast. You’ve suffered a few minor injuries but nothing too bad yet, as you attack the beast with your " + weapon + ". It lets out a huge roar and dies. You are free to leave the castle and go on to carry on the rest of your boring life. Enjoy that and thanks for playing.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        textSize(20);
+        textStyle(BOLD);
+        text("Congratulations! You Won!", width*0.45, height*0.6);
       }
 
       //state = F1
+      //Failure because of attacking beast while asleep.
       function failure1() {
         textSize(18);
         textStyle(BOLD);
@@ -451,6 +708,64 @@
         textSize(14);
         textStyle(NORMAL);
         text("You’re supposed to be a courageous knight not a coward! To slay something while it’s sleeping Is against the knight’s and since you tried to do so you got exactly what you deserved. While creeping up on the dragon you knocked over some gold coins which awoke the beast. Since you were so close the beast simple tripped you with its tail and then proceeded to turn you into a little snack. That’s what you get for being a coward!", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        button1 = new Button(0.1*width, 0.6*height, 'PLAY AGAIN', 0);
+      }
+
+      //state = F2
+      //Run out of food.
+      function failure2() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Game Over", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You've run out of food!", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        button1 = new Button(0.1*width, 0.6*height, 'PLAY AGAIN', 0);
+      }
+
+      //state = 'F3';
+      //No flashlight before entering state 3.
+      function failure3() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Game Over", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You need to use flashlight and batteries! Since you don’t have them (or one of them), you stumbled around a dark room with sharp objects and die.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        button1 = new Button(0.1*width, 0.6*height, 'PLAY AGAIN', 0);
+      }
+
+      //state = F4
+      //No bone before approaching the dog.
+      function failure4() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Game Over", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You did not heeded the beware of dog sign outside the door. You have just died because there was a dog inside that has just mauled you to ribbons.", width*0.1, height*0.2, width*0.8, height*0.3);
+
+        button1 = new Button(0.1*width, 0.6*height, 'PLAY AGAIN', 0);
+      }
+
+      function failure5() {
+        textSize(18);
+        textStyle(BOLD);
+        textAlign(LEFT, TOP);
+        text("Game Over", width*0.1, height*0.15)
+
+        textSize(14);
+        textStyle(NORMAL);
+        text("You were not armed enough to fight the dragon. After several run you were defeated, and you died just one step away from freedom.", width*0.1, height*0.2, width*0.8, height*0.3);
 
         button1 = new Button(0.1*width, 0.6*height, 'PLAY AGAIN', 0);
       }
@@ -480,19 +795,31 @@
         }
       }
 
-      function CheckBox(xpos, ypos, textLabel) {
+      function CheckBox(xpos, ypos, textLabel, appearance = 0) {
         this.xpos = xpos;
         this.ypos = ypos;
         this.textLabel = textLabel;
+        this.check = false;
 
         noStroke();
-        if (mouseIsPressed && mouseX > this.xpos && mouseX < this.xpos+width/12 && mouseY > this.ypos && mouseY < this.ypos+width/20) {
-          fill(80, 150);
+        if (mouseX > this.xpos && mouseX < this.xpos+width/12 && mouseY > this.ypos && mouseY < this.ypos+width/20) {
+          this.isOver = true;
         }
         else {
+          this.isOver = false;
+        }
+
+        if (this.check) {
+          fill(80, 150);
+        } else {
           fill(100, 100);
         }
-        rect(this.xpos, this.ypos, width/12, width/20);
+        if (appearance == 0) {
+          rect(this.xpos, this.ypos, width/12, width/20);
+        }
+        else {
+          ellipse(this.xpos+width/24, this.ypos+width/40, width/12, width/20);
+        }
 
         textAlign(CENTER, CENTER);
         textSize(14);
@@ -522,12 +849,12 @@
         this.limit = limit;
 
         this.pick = function(item) {
-          if (this.size == this.limit) {
-            throw new BagFullException();
+          if (this.items.indexOf(item) >= 0) {
+            throw new AlreadyInException();
           }
 
-          else if (this.items.indexOf(item) >= 0) {
-            throw new AlreadyInException();
+          else if (this.size == this.limit) {
+            throw new BagFullException();
           }
 
           else {
@@ -544,9 +871,8 @@
           else {
             index = this.items.indexOf(item);
 
-            for (i = index; i < size; i ++) {
-              items[i] = items[i+1]
-            }
+            this.items.splice(index, 1);
+            this.items.push(null);
 
             this.size --;
           }
